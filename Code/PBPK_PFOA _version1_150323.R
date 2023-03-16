@@ -14,39 +14,30 @@ setwd(HOME)
 newday <- file.path('C:/Users/TRHU/Documents/R/PBPK_PFOA_PFOS/Results', Sys.Date())
 dir.create(newday)
 
-
-
-#library(data.table)
+# load packages
 library(lubridate)
 library(ggplot2)
-#library(openxlsx)
 library(deSolve)
-#library(PKNCA)
 library(writexl)
 library(ggpubr)
-#library(bitops)
-
-#library(bayestestR)
-#library(htmltools)
-#library(statmod)
-#library(ggstatsplot)
 library(tidyverse)
-#library(PMCMRplus)
 
 
 ## Read in data ##
 
-SumExpPFOA_LB_val <-  read.delim("./Data/SumExpPFOA_BothDays_bothSex_LB_LogN_test ID21-145_240222.csv", sep = ";")
+PFOA_LB_dummy <-  read.delim("./Data/PFOA_LB_dummy.csv", sep = ";")
 
-nPeople <- as.numeric(nrow(SumExpPFOA_LB_val))
+nPeople <- as.numeric(nrow(PFOA_LB_dummy))
 
 ## empty databases to store the results ##
 
-PFOASerumTestTot <- matrix(0, ncol = nPeople, nrow = 438001)
-PFOAFatTestTot <- matrix(0, ncol = nPeople, nrow = 438001)
-PFOAUrineTestTot <- matrix(0, ncol = nPeople, nrow = 438001)
-PFOAKidneyTestTot <- matrix(0, ncol = nPeople, nrow = 438001)
-PFOALiverTestTot <- matrix(0, ncol = nPeople, nrow = 438001)
+PFOASerum <- matrix(0, ncol = nPeople, nrow = 438001) # nrow = 50 (years)*365 (days)*24(hours) +1
+PFOAFat <- matrix(0, ncol = nPeople, nrow = 438001)
+PFOAUrine <- matrix(0, ncol = nPeople, nrow = 438001)
+PFOAKidney <- matrix(0, ncol = nPeople, nrow = 438001)
+PFOALiver <- matrix(0, ncol = nPeople, nrow = 438001)
+
+PFOASerumTestTot
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ###### PBPK model PFOA ####
@@ -389,21 +380,21 @@ v[,"AR"] <- v[,"AR"]/VR
 
 PFOAconc <- as.data.frame(v)
 
-PFOASerumTestTot[,(i)] <- PFOAconc$APlas
-PFOAFatTestTot[,(i)] <- PFOAconc$AF
-PFOAUrineTestTot[,(i)] <- PFOAconc$Aurine
-PFOAKidneyTestTot[,(i)] <- PFOAconc$AK
-PFOALiverTestTot[,(i)] <- PFOAconc$AL
+PFOASerum[,(i)] <- PFOAconc$APlas
+PFOAFat[,(i)] <- PFOAconc$AF
+PFOAUrine[,(i)] <- PFOAconc$Aurine
+PFOAKidney[,(i)] <- PFOAconc$AK
+PFOALiver[,(i)] <- PFOAconc$AL
 
 }
 
 ### END PBPK ###
 
-PFOASerumTestTot <- as.data.frame(PFOASerumTestTot) # ug/L the same as ng/ml
-PFOAFatTestTot <- as.data.frame(PFOAFatTestTot)
-PFOAUrineTestTot <- as.data.frame(PFOAUrineTestTot)
-PFOAKidneyTestTot <- as.data.frame(PFOAKidneyTestTot)
-PFOALiverTestTot <- as.data.frame(PFOALiverTestTot)
+PFOASerum <- as.data.frame(PFOASerum) # ug/L the same as ng/ml
+PFOAFat <- as.data.frame(PFOAFat)
+PFOAUrine <- as.data.frame(PFOAUrine)
+PFOAKidney <- as.data.frame(PFOAKidney)
+PFOALiver <- as.data.frame(PFOALiver)
 
 
 
@@ -424,22 +415,21 @@ PFOA_bal <- sum(PFOAamount[,"Input1"]+ PFOAamount[,"Input2"]- PFOAamount[,"APlas
 
 # add the time to the data frames
 
-PFOASerumTestTot$time <- PFOAamount$time
-PFOASerumTestTot$dose <- PFOAamount$Input1
-PFOASerumTestTot$year <- PFOASerumTestTot[,"time"]/(24*365)
+PFOASerum$time <- PFOAamount$time
+PFOASerum$dose <- PFOAamount$Input1
+PFOASerum$year <- PFOASerum[,"time"]/(24*365)
 
-PFOAFatTestTot$time <- PFOAamount$time
-PFOAFatTestTot$year <- PFOAFatTestTot[,"time"]/(24*365)
+PFOAFat$time <- PFOAamount$time
+PFOAFat$year <- PFOAFat[,"time"]/(24*365)
 
-PFOAUrineTestTot$time <- PFOAamount$time
-PFOAUrineTestTot$year <- PFOAUrineTestTot[,"time"]/(24*365)
+PFOAUrine$time <- PFOAamount$time
+PFOAUrine$year <- PFOAUrine[,"time"]/(24*365)
 
-PFOAKidneyTestTot$time <- PFOAamount$time
-PFOAKidneyTestTot$year <- PFOAKidneyTestTot[,"time"]/(24*365)
+PFOAKidney$time <- PFOAamount$time
+PFOAKidney$year <- PFOAKidney[,"time"]/(24*365)
 
-PFOALiverTestTot$time <- PFOAamount$time
-PFOALiverTestTot$year <- PFOALiverTestTot[,"time"]/(24*365)
-
+PFOALiver$time <- PFOAamount$time
+PFOALiver$year <- PFOALiver[,"time"]/(24*365)
 
 
 
@@ -449,60 +439,60 @@ PFOALiverTestTot$year <- PFOALiverTestTot[,"time"]/(24*365)
 #### ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++####
 
 # PFOA in plasma of one individual
-Plot_PFOA_Plasm_ID21<- ggplot()+
-  geom_path(data = PFOASerumTestTot, aes(x = year, y = V1))+
+Plot_PFOA_Plasm <- ggplot()+
+  geom_path(data = PFOASerum, aes(x = year, y = V1))+
   theme_minimal()+
   theme(axis.text.x = element_text(size = 13),axis.text.y = element_text(size = 13), axis.title = element_text(size = 14))+
   scale_colour_hue()+
   ylab("Concentration of PFOA in plasma (ng/ml)")
 
-Plot_PFOA_Plasm_ID21
+Plot_PFOA_Plasm
 
 
 # PFOA in urine of one individual
-Plot_PFOA_urine_ID21<- ggplot()+
-  geom_path(data = PFOAUrineTestTot, aes(x = year, y = V1))+
+Plot_PFOA_urine <- ggplot()+
+  geom_path(data = PFOAUrine, aes(x = year, y = V1))+
   theme_minimal()+
   theme(axis.text.x = element_text(size = 13),axis.text.y = element_text(size = 13), axis.title = element_text(size = 14))+
   scale_colour_hue()+
   ylab("Concentration of PFOA in urine (ng/ml)")
 
-Plot_PFOA_urine_ID21
+Plot_PFOA_urine
 
 
 # PFOA in liver of one individual
-Plot_PFOA_liver_ID21<- ggplot()+
-  geom_path(data = PFOALiverTestTot, aes(x = year, y = V1))+
+Plot_PFOA_liver<- ggplot()+
+  geom_path(data = PFOALiver, aes(x = year, y = V1))+
   theme_minimal()+
   theme(axis.text.x = element_text(size = 13),axis.text.y = element_text(size = 13), axis.title = element_text(size = 14))+
   scale_colour_hue()+
   ylab("Concentration of PFOA in liver (ng/ml)")+
   xlab("Year")
 
-Plot_PFOA_liver_ID21
+Plot_PFOA_liver
 
 
 # PFOA in kidney of one individual
-Plot_PFOA_kidney_ID21<- ggplot()+
-  geom_path(data = PFOAKidneyTestTot, aes(x = year, y = V1))+
+Plot_PFOA_kidney <- ggplot()+
+  geom_path(data = PFOAKidney, aes(x = year, y = V1))+
   theme_minimal()+
   theme(axis.text.x = element_text(size = 13),axis.text.y = element_text(size = 13), axis.title = element_text(size = 14))+
   scale_colour_hue()+
   ylab("Concentration of PFOA in kidney (ng/ml)")+
   xlab("Year")
 
-Plot_PFOA_kidney_ID21
+Plot_PFOA_kidney
 
 # Combine plot from serum, urine, liver and kidney
 
-Combined_PFOA_conc_time_val_diary <- ggarrange(Plot_PFOA_Plasm_ID21, Plot_PFOA_urine_ID21, Plot_PFOA_liver_ID21, Plot_PFOA_kidney_ID21,
+Plot_combined_PFOA <- ggarrange(Plot_PFOA_Plasm, Plot_PFOA_urine, Plot_PFOA_liver, Plot_PFOA_kidney,
                                                ncol = 2, nrow = 2) 
 
-Combined_PFOA_conc_time_val_diary
+Plot_combined_PFOA
 
 # Save the results
 
-ggsave(filename=file.path(newday, "Combined_PFOA_conc_time_val_diary.jpeg"),
+ggsave(filename=file.path(newday, "Plot_combined_PFOA.jpeg"),
        device = NULL,
        width=NA,
        height=NA,

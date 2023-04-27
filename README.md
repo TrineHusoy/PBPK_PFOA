@@ -37,14 +37,15 @@ The data files as input to the exposure estimates from PCPs
 [EEF_distributions_female.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/EEF_distributions_female.csv)  
 [EEF_distributions_male.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/EEF_distributions_male.csv)  
 [PCP_frequency_dummy.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/PCP_frequency_dummy.csv)  
-[EuroMix_dummy_sex_weight.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/EuroMix_dummy_sex_weight.csv)
+[EuroMix_dummy_sex_weight.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/EuroMix_dummy_sex_weight.csv)  
 
 ### These are the files used for running the PBPK model:
 The R code to run the PBPK model  
 [PBPK_PFOA%20_version1_150323.R](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Code/PBPK_PFOA%20_version1_150323.R)  
+The data files as input to the PBPK modeling from the exposure  
 
 ## Exposure assesment from diet and PCPs
-
+Establish the folders "Code", "Data" and "Results" in your directory and copy the relevant files to the appropriate folders. Open the R or Rmd code in RStudio and the code will upload the data files and create a new folder under "Results" with the date of the day to store the results. 
 
 ## Running the PBPK model
 

@@ -18,18 +18,30 @@ Challenges and weaknesses in the PBPK model is discussed in the paper.
 The R code to run the dietary exposure assessment  
 [PFOA_food_version1.Rmd](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Code/PFOA_food_version1.Rmd)  
 The data files as input to the dietary exposure  
+[3-SumPFAS_food_conc_LB.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/3-SumPFAS_food_conc_LB.csv)  
+[3-SumPFAS_food_conc_MB.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/3-SumPFAS_food_conc_MB.csv)  
+[3-SumPFAS_food_conc_UB.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/3-SumPFAS_food_conc_UB.csv)  
+[foodintake_dummy_day1.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/foodintake_dummy_day1.csv)  
+[foodintake_dummy_day2.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/foodintake_dummy_day2.csv)
+[EuroMix_dummy_sex_weight.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/EuroMix_dummy_sex_weight.csv)
 
 ### These are the files used for the exposure estimates from the PCPs:
-The R code to run the exposure assessment from PCPs
-[Code/PFOA_PCP_version1.R](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Code/PFOA_PCP_version1.R)
-The data files as input to the exposure estimates from PCPs
-[2_SumPCPPFAS_LB_050122.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/2_SumPCPPFAS_LB_050122.csv)
-[2_SumPCPPFAS_MB_050122.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/2_SumPCPPFAS_MB_050122.csv)
-[2_SumPCPPFAS_UB_050122.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/2_SumPCPPFAS_UB_050122.csv)
+The R code to run the exposure assessment from PCPs  
+[Code/PFOA_PCP_version1.R](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Code/PFOA_PCP_version1.R)  
+The data files as input to the exposure estimates from PCPs  
+[2_SumPCPPFAS_LB_050122.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/2_SumPCPPFAS_LB_050122.csv)  
+[2_SumPCPPFAS_MB_050122.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/2_SumPCPPFAS_MB_050122.csv)  
+[2_SumPCPPFAS_UB_050122.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/2_SumPCPPFAS_UB_050122.csv)  
+[AmountsPerApplication_female.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/AmountsPerApplication_female.csv)  
+[AmountsPerApplication_male.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/AmountsPerApplication_male.csv)  
+[EEF_distributions_female.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/EEF_distributions_female.csv)  
+[EEF_distributions_male.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/EEF_distributions_male.csv)  
+[PCP_frequency_dummy.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/PCP_frequency_dummy.csv)  
+[EuroMix_dummy_sex_weight.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/EuroMix_dummy_sex_weight.csv)
 
-### These are the files used for running the PBPK modeling:
-The R code to run the PBPK model
-[PBPK_PFOA%20_version1_150323.R](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Code/PBPK_PFOA%20_version1_150323.R)
+### These are the files used for running the PBPK model:
+The R code to run the PBPK model  
+[PBPK_PFOA%20_version1_150323.R](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Code/PBPK_PFOA%20_version1_150323.R)  
 
 ## Exposure assesment from diet and PCPs
 

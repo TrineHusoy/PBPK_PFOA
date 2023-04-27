@@ -13,6 +13,10 @@ Challenges and weaknesses in the PBPK model is discussed in the paper.
 
 
 ## Files
+ [a link](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/2_SumPCPPFAS_LB_050122.csv)
+ 
+## Exposure assesment from diet and PCPs
+
 
 ## Running the PBPK model
 

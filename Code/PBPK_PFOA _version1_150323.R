@@ -25,7 +25,7 @@ library(tidyverse)
 
 ## Read in data ##
 
-PFOA_LB_dummy <-  read.delim("./Data/PFOA_LB_dummy.csv", sep = ";")
+PFOA_LB_dummy <-  read.delim("./Data/SumPFOA_LB_food_PCP.csv", sep = ";")
 
 nPeople <- as.numeric(nrow(PFOA_LB_dummy))
 
@@ -71,7 +71,7 @@ QKC = 0.175 # Fraction cardiac output going to kidney
 QSkC = 0.058 # Fraction cardiac output going to skin
 QGC = 0.181 # Fraction of cardiac output going to gut and the liver via portal arthery
 
-BW = as.numeric(SumExpPFOA_LB_val[i,3])      # Body weight from the EuroMix study
+BW = as.numeric(PFOA_LB_dummy[i,3])      # Body weight from the EuroMix study
 
 ## fractional tissue columes ##
 
@@ -137,7 +137,7 @@ AbsPFOA =  0.016 #0.00048     # Changed to the absorption measured by Abraham an
 
 # kidney and urine #
 
-Tmc = as.numeric(SumExpPFOA_LB_val[i,5]) #5000  # ug/h/kg^0.75 Maximum resorption rate, changed from 6 in the original Loccisano 2011 model (ug)
+Tmc = as.numeric(PFOA_LB_dummy[i,4]) #5000  # ug/h/kg^0.75 Maximum resorption rate, changed from 6 in the original Loccisano 2011 model (ug)
 # representing a half-life of 2.3 years
 
 Tm = Tmc*BW^0.75 # transporter maximum
@@ -178,14 +178,14 @@ tchng = 50*365*24  # Duration of exposure (h); 50 years; turn dose on and off
 
 
 
-Dermconc = 0 #as.numeric(SumExpPFOA_LB_val[i,14])
+Dermconc = as.numeric(PFOA_LB_dummy[i,12])
 Dermdose = Dermconc*BW*AbsPFOA     # Internal dose from dermal absorption (Ug/day)
 
 
 
 ## Oral exposure ##
 
-Oralconc = as.numeric(SumExpPFOA_LB_val[i,7])  # Oral uptake /ug/kg bw/day
+Oralconc = as.numeric(PFOA_LB_dummy[i,5])  # Oral uptake /ug/kg bw/day
 Oraldose = Oralconc*BW  # (ug/day)
 
 

@@ -1,18 +1,15 @@
 ####################################################################################################
-# In this project we want to implement a PBPK model on PFOA described by EFSA 2020
-# Originally this PBPK model were first published by Loccisano et al 2011
-# The goal is to translate the model from Berkeley-Madonna to R, and make it work with the same data
-# An implementation of a global sensitivity analysis is needed before we modify the model
-# Modify the model to include dermal exposure and excretion in bile and enterohepatic circulation
-# Date 17.03.20
+# Sensitivity analysis of the PBPK model of PFOA using pksensi
+# Trine Husøy
+# Date: 090523
 #####################################################################################################
 
-HOME <- "F:/Forskningsprosjekter/PDB 1996 - EUROMIX - European t_/Forskningsfiler/TRHU/R/Test_PFOA_github"
+HOME <- "your work directory"
 
 setwd(HOME)
 
 
-newday <- file.path('F:/Forskningsprosjekter/PDB 1996 - EUROMIX - European t_/Forskningsfiler/TRHU/R/Test_PFOA_github/Results', Sys.Date())
+newday <- file.path('your work directory/Results', Sys.Date())
 dir.create(newday)
 
 
@@ -306,7 +303,7 @@ PBPKmodPFOA <- function(t,state,parameters){
     
     ## Feaces
     
-    Rfaeces <- CG*FreeG*kfaeces #µg/h
+    Rfaeces <- CG*FreeG*kfaeces #B5g/h
     
     ## Skin compartment
     RSk <- QSk*(CA*Free-CSk*FreeSk)+Input2*DoseOn # Rate of PFOA amount change in skin

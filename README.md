@@ -14,7 +14,7 @@ Challenges and weaknesses in the PBPK model is discussed in the paper.
 
 ## Files
 
-### These are the files used for the exposure estimate for PFOA from the diet:
+### Files used for the exposure estimate for PFOA from the diet:
 The R code to run the dietary exposure assessment  
 [PFOA_food_version1.Rmd](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Code/PFOA_food_version1.Rmd)  
 The data files as input to the dietary exposure  
@@ -25,9 +25,9 @@ The data files as input to the dietary exposure
 [foodintake_dummy_day2.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/foodintake_dummy_day2.csv)
 [EuroMix_dummy_sex_weight.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/EuroMix_dummy_sex_weight.csv)
 
-### These are the files used for the exposure estimates from the PCPs:
+### Files used for the exposure estimates from the PCPs:
 The R code to run the exposure assessment from PCPs  
-[Code/PFOA_PCP_version1.R](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Code/PFOA_PCP_version1.R)  
+[PFOA_PCP_version1.R](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Code/PFOA_PCP_version1.R)  
 The data files as input to the exposure estimates from PCPs  
 [2_SumPCPPFAS_LB_050122.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/2_SumPCPPFAS_LB_050122.csv)  
 [2_SumPCPPFAS_MB_050122.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/2_SumPCPPFAS_MB_050122.csv)  
@@ -39,14 +39,25 @@ The data files as input to the exposure estimates from PCPs
 [PCP_frequency_dummy.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/PCP_frequency_dummy.csv)  
 [EuroMix_dummy_sex_weight.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/EuroMix_dummy_sex_weight.csv)  
 
-### These are the files used for running the PBPK model:
+### Files used for running the PBPK model:
 The R code to run the PBPK model  
-[PBPK_PFOA%20_version1_150323.R](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Code/PBPK_PFOA%20_version1_150323.R)  
-The data files as input to the PBPK modeling from the exposure  
+[PBPK_PFOA_version1_150323.R](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Code/PBPK_PFOA%20_version1_150323.R)  
+The data files as input to the PBPK modeling from the exposure
+[SumPFOA_LB_food_PCP](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/foodintake_dummy_day1.csv)
+
+### Files used for the sensitivity analyses of the PBPK model
+
 
 ## Exposure assesment from diet and PCPs
 Establish the folders "Code", "Data" and "Results" in your directory and copy the relevant files to the appropriate folders. Open the R or Rmd code in RStudio and the code will upload the data files and create a new folder under "Results" with the date of the day to store the results. 
 
 ## Running the PBPK model
+Normally I would create a R project linked to github as a start of my work, but you can also run the PBPK model just by open it in R. Upload the dummy data file from the Data folder and run the model. The model includes exposure from both diet and personal care products, and you can run one at the time by setting the exposure to zero. 
 
 ## Sensitivity analyses of the PBPK model using pksensi package in R
+
+The PBPK model in the sensitivity analysis is presented separately for now. Here only one concentration for the diet and PCP is tested in each run, and the values have eto be introduced manually. We have used R package pksensi developed by Hsieh et al 2020 (https://pubmed.ncbi.nlm.nih.gov/33426260/), which is a tool for global sensitivity analysis of PBPK models. The repository for the published version of pksensi you can find here here https://github.com/ElsevierSoftwareX/SOFTX_2020_29.
+We have included the parameters from the PBPK model of PFOA that we believe is the most important ones, and the output will give you an uncertainty evaluation and a sensitivity analyse of all the included parameters.  
+
+
+

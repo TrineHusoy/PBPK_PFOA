@@ -6,12 +6,12 @@
 #####################################################################################################
 
 # set work directory
-HOME <- "C:/Users/TRHU/Documents/R/PBPK_PFOA_PFOS"
+HOME <- "work directory"
 setwd(HOME)
 
 
 # creating a new folder to store the results 
-newday <- file.path('C:/Users/TRHU/Documents/R/PBPK_PFOA_PFOS/Results', Sys.Date())
+newday <- file.path('work directory/Results', Sys.Date())
 dir.create(newday)
 
 # load packages
@@ -37,11 +37,12 @@ PFOAUrine <- matrix(0, ncol = nPeople, nrow = 438001)
 PFOAKidney <- matrix(0, ncol = nPeople, nrow = 438001)
 PFOALiver <- matrix(0, ncol = nPeople, nrow = 438001)
 
-PFOASerumTestTot
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ###### PBPK model PFOA ####
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
+
+### START PBPK ###
 
 for (i in 1:nPeople) { 
 

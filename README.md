@@ -52,11 +52,11 @@ The data files as input to the PBPK modeling from the exposure
 Establish the folders "Code", "Data" and "Results" in your directory and copy the relevant files to the appropriate folders. Open the R or Rmd code in RStudio and the code will upload the data files and create a new folder under "Results" with the date of the day to store the results. 
 
 ## Running the PBPK model
-Normally I would create a R project linked to github as a start of my work, but you can also run the PBPK model just by open it in R. Upload the dummy data file from the Data folder and run the model. The model includes exposure from both diet and personal care products, and you can run one at the time by setting the exposure to zero. 
+Normally I would create a R project linked to github as a start of my work, but you can also run the PBPK model just by open it in R. Upload the dummy data file from the Data folder and run the model. The model includes exposure from both diet and personal care products, and you can run one at the time by setting the exposure to zero for one of them. Run the model from ###START PBPK## to ###END PBPK###. 
 
 ## Sensitivity analyses of the PBPK model using pksensi package in R
 
-The PBPK model in the sensitivity analysis is presented separately for now. Here only one concentration for the diet and PCP is tested in each run, and the values have eto be introduced manually. We have used R package pksensi developed by Hsieh et al 2020 (https://pubmed.ncbi.nlm.nih.gov/33426260/), which is a tool for global sensitivity analysis of PBPK models. The repository for the published version of pksensi you can find here here https://github.com/ElsevierSoftwareX/SOFTX_2020_29.
+The PBPK model in the sensitivity analysis is presented separately for now. Here only one concentration for the diet and PCP is tested in each run, and the values have to be keyed in manually. We have used R package pksensi developed by Hsieh et al 2020 (https://pubmed.ncbi.nlm.nih.gov/33426260/), which is a tool for global sensitivity analysis of PBPK models. The repository for the published version of pksensi you can find here here https://github.com/ElsevierSoftwareX/SOFTX_2020_29.
 We have included the parameters from the PBPK model of PFOA that we believe is the most important ones, and the output will give you an uncertainty evaluation and a sensitivity analyse of all the included parameters.  
 
 

@@ -46,7 +46,7 @@ The data files as input to the PBPK modeling from the exposure
 [SumPFOA_LB_food_PCP](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/foodintake_dummy_day1.csv)
 
 ### Files used for the sensitivity analyses of the PBPK model
-
+[PBPK_PFOA_pksensi_version1](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Code/PBPK_PFOA_pksensi_version1.R)  
 
 ## Exposure assesment from diet and PCPs
 Establish the folders "Code", "Data" and "Results" in your directory and copy the relevant files to the appropriate folders. Open the R or Rmd code in RStudio and the code will upload the data files and create a new folder under "Results" with the date of the day to store the results. 

@@ -42,7 +42,7 @@ The data files as input to the exposure estimates from PCPs
 ### Files used for running the PBPK model:
 The R code to run the PBPK model  
 [PBPK_PFOA_version1_150323.R](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Code/PBPK_PFOA%20_version1_150323.R)  
-The data files as input to the PBPK modeling from the exposure
+The data files as input to the PBPK modeling from the exposure  
 [SumPFOA_LB_food_PCP](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/foodintake_dummy_day1.csv)
 
 ### Files used for the sensitivity analyses of the PBPK model

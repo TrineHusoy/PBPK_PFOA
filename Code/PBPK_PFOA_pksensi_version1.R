@@ -7,12 +7,12 @@
 # Date 17.03.20
 #####################################################################################################
 
-HOME <- "C:/Users/TRHU/Documents/R/PBPK_PFOA_PFOS"
+HOME <- "F:/Forskningsprosjekter/PDB 1996 - EUROMIX - European t_/Forskningsfiler/TRHU/R/Test_PFOA_github"
 
 setwd(HOME)
 
 
-newday <- file.path('C:/Users/TRHU/Documents/R/PBPK_PFOA_PFOS/Results', Sys.Date())
+newday <- file.path('F:/Forskningsprosjekter/PDB 1996 - EUROMIX - European t_/Forskningsfiler/TRHU/R/Test_PFOA_github/Results', Sys.Date())
 dir.create(newday)
 
 

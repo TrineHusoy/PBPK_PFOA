@@ -49,7 +49,7 @@ The data files as input to the PBPK modeling from the exposure
 [PBPK_PFOA_pksensi_version1.R](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Code/PBPK_PFOA_pksensi_version1.R)  
 
 ## Exposure assesment from diet and PCPs
-Establish the folders "Code", "Data" and "Results" in your directory and copy the relevant files to the appropriate folders. Open the R or Rmd code in RStudio and the code will upload the data files and create a new folder under "Results" with the date of the day to store the results. 
+Establish the folders "Code", "Data" and "Results" in your directory and copy the relevant files to the appropriate folders. Open the R or Rmd code in RStudio and insert your work directory in the code. The data files will be uploaded and create a new folder under "Results" with the date of the day to store the results. 
 
 ## Running the PBPK model
 Normally I would create a R project linked to github as a start of my work, but you can also run the PBPK model just by open it in R. Upload the dummy data file from the Data folder and run the model. The model includes exposure from both diet and personal care products, and you can run one at the time by setting the exposure to zero for one of them. Run the model from ###START PBPK## to ###END PBPK###. 

@@ -16,7 +16,7 @@ Challenges and weaknesses in the PBPK model is discussed in the paper.
 
 ### Files used for the exposure estimate for PFOA from the diet
 The R code to run the dietary exposure assessment  
-[PFOA_food_version1.Rmd](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Code/PFOA_food_version1.Rmd)  
+[PFOA_food_version1.R](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Code/PFOA_food_version1.R)  
 The data files as input to the dietary exposure  
 [3-SumPFAS_food_conc_LB.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/3-SumPFAS_food_conc_LB.csv)  
 [3-SumPFAS_food_conc_MB.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/3-SumPFAS_food_conc_MB.csv)  

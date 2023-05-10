@@ -1,50 +1,24 @@
----
-title: "Exposure assessment of PFOA from foods"
-output:
-  word_document:
-    toc: yes
-  html_document:
-    toc: yes
-    toc_float: yes
-    toc_collapsed: yes
-editor_options:
-  chunk_output_type: console
-Autor: Trine Husøy
-Date: 27/04-2022
----
-This document present the R code used for the exposure assessment of PFOA from foods. The code is presented in a markdown document including explanatory text, and is usig the dummy data from the EuroMix study. 
-
-# R-Packages and knitr settings
-
-Define knitr chunk options
-
-For more info in Markdown and knitr chunk options see [rmarkdown-cookbook](https://bookdown.org/yihui/rmarkdown-cookbook/chunk-options.html)
-
-```{r}
-knitr::opts_chunk$set(
-  comment = "#>", echo = TRUE, warning = FALSE, error = FALSE, message = FALSE, fig.width = 6)
-```
+#########################################################################################
+## Exposusre assessment for PFOA from diet using the EuroMix stuy
+## Trine Husøy
+## Date: 090523
+##########################################################################################
 
 # Sett work directory and organise results
-```{r}
-HOME <- "Your work directory/PFAS_exposure"
+
+HOME <- "C:/Users/TRHU/Documents/R/PFAS_exposure"
 
 setwd(HOME)
-```
 
-Create a folder with current date in the Result folder
-```{r}
 
-newday <- file.path('Your work directory/Results', Sys.Date())
+# Create a folder with current date in the Result folder
+newday <- file.path('C:/Users/TRHU/Documents/R/PFAS_exposure/Results', Sys.Date())
 dir.create(newday)
-```
+
 
 
 # Load required packages and libraries
 
-```{r}
-
-#library(data.table)
 library(ggplot2)
 library(writexl)
 library(ggpubr)
@@ -52,27 +26,23 @@ library(Hmisc)
 library(openxlsx)
 library(tidyverse)
 library(flextable)
-```
 
 
 
-Calculate the location parameter (Loc or logmean) of the lognormal distribution
+# Calculate the location parameter (Loc or logmean) of the lognormal distribution
 
-```{r}
 
 Lognorm_Loc <- function(x){
   log(
     x$mean^2/sqrt(x$sd^2+x$mean^2)
   )
-
+  
 }
 
-```
+
+# Calculate the shape (logsd) parameter of the lognormal distribution. 
 
 
-Calculate the shape (logsd) parameter of the lognormal distribution. 
-
-```{r}
 Lognorm_shape <- function(x){
   sqrt(
     log(
@@ -81,50 +51,44 @@ Lognorm_shape <- function(x){
   )
 }
 
-```
 
-A function for summarising the data
-```{r}
+
+# A function for summarising the data
+
 
 Sum <-function(x){
   x %>%
-  summarise(
-    N = n(),
-    mean = mean(Conc, na.rm=TRUE),
-    sd=sd(Conc, na.rm=TRUE),
-    min=min(Conc, na.rm=TRUE),
-    P05=quantile(Conc, .05, na.rm=TRUE),
-    P50=quantile(Conc, .50, na.rm=TRUE),
-    P95=quantile(Conc, .95, na.rm=TRUE),
-    max=max(Conc, na.rm=TRUE)
-  )
+    summarise(
+      N = n(),
+      mean = mean(Conc, na.rm=TRUE),
+      sd=sd(Conc, na.rm=TRUE),
+      min=min(Conc, na.rm=TRUE),
+      P05=quantile(Conc, .05, na.rm=TRUE),
+      P50=quantile(Conc, .50, na.rm=TRUE),
+      P95=quantile(Conc, .95, na.rm=TRUE),
+      max=max(Conc, na.rm=TRUE)
+    )
 }  
 
 Sum_1 <-function(x){
   x %>%
-  group_by(IDkode) %>%
-  summarise(
-    N = n(),
-    mean = mean(value, na.rm=TRUE),
-    sd=sd(value, na.rm=TRUE),
-    min=min(value, na.rm=TRUE),
-    P05=quantile(value, .05, na.rm=TRUE),
-    P50=quantile(value, .50, na.rm=TRUE),
-    P95=quantile(value, .95, na.rm=TRUE),
-    max=max(value, na.rm=TRUE)
-  )
+    group_by(IDkode) %>%
+    summarise(
+      N = n(),
+      mean = mean(value, na.rm=TRUE),
+      sd=sd(value, na.rm=TRUE),
+      min=min(value, na.rm=TRUE),
+      P05=quantile(value, .05, na.rm=TRUE),
+      P50=quantile(value, .50, na.rm=TRUE),
+      P95=quantile(value, .95, na.rm=TRUE),
+      max=max(value, na.rm=TRUE)
+    )
 }  
 
 
-```
- 
 
+# The MC_Sim function performs the Monte Carlo (MC) simulation. 
 
-The MC_Sim function performs the Monte Carlo (MC) simulation. It creates an empty array (X), and uses the loc and shape parameters from the amount data (y) to  select an amount value and multiply this amount value to a concentration value from the concentration database (z) by random sampling with replacement. The MC is repeated 1000 times. 
-
-To have the same value in different trials, addition of a "seed" using "set.seed(123)" is needed, where "123" could be any number, but always the same.
-
-```{r}
 
 MC_sim <- function(x, y ,z){
   set.seed(123)
@@ -134,22 +98,15 @@ MC_sim <- function(x, y ,z){
   for (u in 1:MC){
     for(i in 1:nrow(z)){
       x[,i,u] <- y[,i]*
-      rlnorm(n=1,z$Loc[i], z$Shape[i])
+        rlnorm(n=1,z$Loc[i], z$Shape[i])
+    }
   }
- }
   return(x)
 }
 
 
-```
- 
-  
-# Data 
+# Read data 
 
-
-Read in raw data using relative paths. Six files are uploaded. Two files with fodd consumption data from day 1 and day 2 of EuroMix, three files with concentration data of PFAS's as lower bound (LB), medium bound (MB) and upper bound (UB), and one file containing sex and body weight of the participants.  Three files are uploaded. One with the concentrations of all six UV filters, the amount of sunscreen used and the absorption of the UV filters through the skin. 
-
-```{r}
 FoodIntakeDiaryDay1 <-  read.csv2("./Data/foodintake_dummy_day1.csv")
 FoodIntakeDiaryDay1 <- data.frame(sapply(FoodIntakeDiaryDay1, function(x) as.numeric(as.character(x)))) # convert to nummeric
 FoodIntakeDiaryDay2 <- read.csv2("./Data/foodintake_dummy_day2.csv")
@@ -158,62 +115,53 @@ PFAS_LB <- read.csv2("./Data/3-SumPFAS food conc_LB.csv")
 PFAS_MB <- read.csv2("./Data/3-SumPFAS food conc_MB.csv")
 PFAS_UB <- read.csv2("./Data/3-SumPFAS food conc_UB.csv")
 SexWeight <- read.csv2("./Data/EuroMix_dummy_sex_weight.csv")
-```
 
-
-
+############################################
 ## Cleaning of the data
+#################################################
 
-Take the average of the consumption data from day 1 and day 2 for use in the exposure assessment
-```{r}
 FoodIntakeDiaryBothDays <- aggregate(.~ IDkode, rbind(FoodIntakeDiaryDay1,FoodIntakeDiaryDay2), sum)/2
 FoodIntakeDiaryBothDays[,1] <- FoodIntakeDiaryBothDays[,1]*2
-```
 
-Merge FoodIntake with sex and weight
-```{r}
+# Merge FoodIntake with sex and weight
+
 FoodIntakeDiaryBothDays <- merge(SexWeight, FoodIntakeDiaryBothDays, by = "IDkode", all = TRUE)
-```
 
-Rename columns
-```{r}
+
+# Rename columns
+
 PFAS_LB <- PFAS_LB %>% rename(food = X)
 PFAS_MB <- PFAS_MB %>% rename(food = X)
 PFAS_UB <- PFAS_UB %>% rename(food = X)
-```
 
+# Delete the food category flatfish, since this was not reported eaten in the diaries
 
-Delete the food category flatfish, since this was not reported eaten in the diaries
-```{r}
 FoodIntakeDiaryBothDays <- FoodIntakeDiaryBothDays %>%  dplyr::select(-FlatFish)
 PFAS_LB <- PFAS_LB %>% filter(food != "FlatFish")
 PFAS_MB <- PFAS_MB %>% filter(food != "FlatFish")
 PFAS_UB <- PFAS_UB %>% filter(food != "FlatFish")
-```
 
-Delete the food category "fish", since we will build up this later from the other fish categories
-```{r}
+
+# Delete the food category "fish", since we will build up this later from the other fish categories
+
 FoodIntakeDiaryBothDays <- FoodIntakeDiaryBothDays %>%  dplyr::select(-Fish)
 PFAS_LB <- PFAS_LB %>% filter(food != "Fish")
 PFAS_MB <- PFAS_MB %>% filter(food != "Fish")
 PFAS_UB <- PFAS_UB %>% filter(food != "Fish")
-```
 
-Extract food eaten for males and females separately
-```{r}
+# Extract food eaten for males and females separately
+
 FoodIntakeDiaryBothDays_male <- FoodIntakeDiaryBothDays %>% filter(cat_male == 2)
 FoodIntakeDiaryBothDays_female <- FoodIntakeDiaryBothDays %>%  filter(cat_male == 1)
-```
 
-Delete the categories not needed any longer 
-```{r}
+# Delete the categories not needed any longer 
+
 FoodIntakeDiaryBothDays_male <- FoodIntakeDiaryBothDays_male %>%  dplyr::select(-cat_male)
 FoodIntakeDiaryBothDays_female <- FoodIntakeDiaryBothDays_female %>%  dplyr::select(-cat_male)
-```
 
 
-Extract the PFOA data from the concentration data
-```{r}
+# Extract the PFOA data from the concentration data
+
 
 PFOA_LB <- PFAS_LB %>% dplyr::select(food, N, PFOA_lb_mean, PFOA_lb_SD)
 colnames(PFOA_LB) <- c("Foods", "N", "mean", "sd")
@@ -222,10 +170,9 @@ colnames(PFOA_MB) <- c("Foods", "N", "mean", "sd")
 PFOA_UB <- PFAS_UB %>% dplyr::select(food, N, PFOA_ub_mean, PFOA_ub_SD)
 colnames(PFOA_UB) <- c("Foods", "N", "mean", "sd")
 
-```
 
-Calculate the location parameter of the log normal the distribution
-```{r}
+# Calculate the location parameter of the log normal the distribution
+
 PFOA_LB$Loc <- Lognorm_Loc(PFOA_LB)
 PFOA_LB$Shape <- Lognorm_shape(PFOA_LB)
 colnames(PFOA_LB) <- c("Foods", "N", "mean", "sd", "Loc", "Shape")
@@ -237,23 +184,19 @@ colnames(PFOA_MB) <- c("Foods", "N", "mean", "sd", "Loc", "Shape")
 PFOA_UB$Loc <- Lognorm_Loc(PFOA_UB)
 PFOA_UB$Shape <- Lognorm_shape(PFOA_UB)
 colnames(PFOA_UB) <- c("Foods", "N", "mean", "sd", "Loc", "Shape")
-```
 
-Replace NAs by zero
-```{r}
+
+# Replace NAs by zero
 
 FoodIntakeDiaryBothDays_male[is.na(FoodIntakeDiaryBothDays_male)] <- 0
 FoodIntakeDiaryBothDays_female[is.na(FoodIntakeDiaryBothDays_female)] <- 0
 PFOA_LB[is.na(PFOA_LB)] <- 0
 PFOA_MB[is.na(PFOA_MB)] <- 0
 PFOA_UB[is.na(PFOA_UB)] <- 0
-```
 
-
+############################################################
 # Probabilistic exposure estimate for males
-
-```{r}
-
+###############################################################
 
 FoodBothDays_male_PFOA_LB <- MC_sim(FoodBothDays_male_PFOA_LB, FoodIntakeDiaryBothDays_male, PFOA_LB)/1000000 # divide on 1000000 to get in ug/day
 FoodBothDays_male_PFOA_MB <- MC_sim(FoodBothDays_male_PFOA_MB, FoodIntakeDiaryBothDays_male, PFOA_MB)/1000000
@@ -263,10 +206,9 @@ print(FoodBothDays_male_PFOA_LB[1,,7])
 print(FoodBothDays_male_PFOA_MB[1,,7])
 print(FoodBothDays_male_PFOA_UB[1,,7])
 
-```
 
 ## Calculate the total PFOA exposure in ug/day per individual for each MC iteration
-```{r}
+
 
 # LB
 PFOA_BothDays_LB_male<-as.data.frame(matrix(NA, nrow = 44, ncol = 1000))
@@ -293,10 +235,9 @@ PFOA_BothDays_UB_male$IDkode <- FoodIntakeDiaryBothDays_male[,1]
 rownames(PFOA_BothDays_UB_male) <- PFOA_BothDays_UB_male$IDkode
 
 
-```
 
 ## Make summary data from total exposure for each individual for input to the PBPK model ug/day
-```{r}
+
 
 PFOA_BothDays_LB_male_long <- PFOA_BothDays_LB_male %>%  
   pivot_longer(cols = -IDkode, values_to = "value") %>%
@@ -318,22 +259,11 @@ SumPFOA_BothDays_LB_male <- Sum_1(PFOA_BothDays_LB_male_long)
 SumPFOA_BothDays_MB_male <- Sum_1(PFOA_BothDays_MB_male_long)
 SumPFOA_BothDays_UB_male <- Sum_1(PFOA_BothDays_UB_male_long)
 
-set_flextable_defaults(font.size = 9, theme_fun = theme_vanilla)
-head(SumPFOA_BothDays_LB_male) %>% 
-  flextable() %>% 
-  colformat_double(digits =3)
-head(SumPFOA_BothDays_MB_male) %>% 
-  flextable() %>% 
-  colformat_double(digits =3)
-head(SumPFOA_BothDays_MB_male) %>% 
-  flextable() %>% 
-  colformat_double(digits =3)
 
-```
 
 
 ### Make summary data across all exposure assessmets for all males (ug/day)
-```{r}
+
 
 PFOA_LB_males_BothDays_vector <- as.vector(PFOA_BothDays_LB_male_long$value)
 plot(ecdf(PFOA_LB_males_BothDays_vector))
@@ -342,12 +272,11 @@ plot(ecdf(PFOA_LB_males_BothDays_vector))
 SumPFOA_LB_male_BothDays <- describe(PFOA_LB_males_BothDays_vector)
 SumPFOA_LB_male_BothDays
 
-```
 
 ## Make summary data for all males based on all MC iterations expressed as ug/kg bw/day
 
-Divide the ug PFOA on individual BW
-```{r}
+# Divide the ug PFOA on individual BW
+
 #LB
 PFOA_BothDays_LB_male_kg <- PFOA_BothDays_LB_male_long %>% 
   left_join(SexWeight, by = c("IDkode" = "IDkode")) %>% 
@@ -377,11 +306,8 @@ PFOA_BothDays_UB_male_kg <- PFOA_BothDays_UB_male_kg %>%  dplyr::select(-con_wei
 SumPFOA_BothDays_UB_male_kg <- Sum_1(PFOA_BothDays_UB_male_kg)
 
 
-
-```
-
 ### Save the table as excel file
-```{r}
+
 
 write.xlsx(SumPFOA_BothDays_LB_male_kg, file = file.path(newday,"SumPFOA_BothDays_LB_male_kg.xlsx"),
            colNames = TRUE, borders = "rows")
@@ -392,12 +318,10 @@ write.xlsx(SumPFOA_BothDays_MB_male_kg, file = file.path(newday,"SumPFOA_BothDay
 write.xlsx(SumPFOA_BothDays_UB_male_kg, file = file.path(newday,"SumPFOA_BothDays_UB_male_kg.xlsx"),
            colNames = TRUE, borders = "rows")
 
-```
-
 
 ## Plott external exposure to PFOA for males for LB, MB, and UB
 
-```{r}
+
 A = c(PFOA_BothDays_LB_male_long$value, PFOA_BothDays_MB_male_long$value, PFOA_BothDays_UB_male_long$value)
 B = replicate(44000,"LB")
 C = replicate(44000,"MB")
@@ -410,33 +334,30 @@ PFOA_males_BothDays_LB_MB_UB[2] <- E
 
 names(PFOA_males_BothDays_LB_MB_UB)[1] <- "PFOAconc"
 names(PFOA_males_BothDays_LB_MB_UB)[2] <- "Exposure"
-```
+
 
 ### Make a cumulative density plot with the LB, MB and UB exposure
 
-```{r}
-Plot_PFOA_males_BothDays_LB_MB_UB <- ggplot(data = PFOA_males_BothDays_LB_MB_UB, aes(PFOAconc, colour = Exposure)) +
+Plot_PFOA_males_diary_LB_MB_UB <- ggplot(data = PFOA_males_BothDays_LB_MB_UB, aes(PFOAconc, colour = Exposure)) +
   geom_line(stat = "ecdf", size = 0.5)+
   scale_colour_hue()+
   theme_minimal()+
-  scale_x_continuous(limits=c(1,150))+
-  xlab("PFOA (ng/day)")+
+  scale_x_continuous(limits=c(0.01,0.5))+
+  xlab("PFOA (ng/kg bw/day)")+
   ylab("Cumulative probability")+
-  annotate("text", x=150, y=0.95, label="Males", size=4)
+  annotate("text", x=0.45, y=0.95, label="Males", size=4)
 
-Plot_PFOA_males_BothDays_LB_MB_UB
+Plot_PFOA_males_diary_LB_MB_UB
 
-ggsave(filename=file.path(newday,"Plot_PFOA_males_BothDays_LB_MB_UB.jpeg"),
+ggsave(filename=file.path(newday,"Plot_PFOA_males_diary_LB_MB_UB.jpeg"),
        device = NULL,
        width=NA,
        height=NA,
        units="mm")
-```
 
-
+###################################################
 # Probabilistic exposure for females
-
-```{r}
+###################################################
 
 
 FoodBothDays_female_PFOA_LB <- MC_sim(FoodBothDays_female_PFOA_LB, FoodIntakeDiaryBothDays_female, PFOA_LB)/1000000 # divide on 1000000 to get in ug/day
@@ -447,10 +368,9 @@ print(FoodBothDays_female_PFOA_LB[1,,7])
 print(FoodBothDays_female_PFOA_MB[1,,7])
 print(FoodBothDays_female_PFOA_UB[1,,7])
 
-```
 
 ## Calculate the total PFOA exposure in ug/day per individual for each MC iteration
-```{r}
+
 
 # LB
 PFOA_BothDays_LB_female<-as.data.frame(matrix(NA, nrow = 100, ncol = 1000))
@@ -477,10 +397,8 @@ PFOA_BothDays_UB_female$IDkode <- FoodIntakeDiaryBothDays_female[,1]
 rownames(PFOA_BothDays_UB_female) <- PFOA_BothDays_UB_female$IDkode
 
 
-```
-
 ## Make summary data from total exposure for each individual for input to the PBPK model ug/day
-```{r}
+
 
 PFOA_BothDays_LB_female_long <- PFOA_BothDays_LB_female %>%  
   pivot_longer(cols = -IDkode, values_to = "value") %>%
@@ -502,21 +420,9 @@ SumPFOA_BothDays_LB_female <- Sum_1(PFOA_BothDays_LB_female_long)
 SumPFOA_BothDays_MB_female <- Sum_1(PFOA_BothDays_MB_female_long)
 SumPFOA_BothDays_UB_female <- Sum_1(PFOA_BothDays_UB_female_long)
 
-set_flextable_defaults(font.size = 9, theme_fun = theme_vanilla)
-head(SumPFOA_BothDays_LB_female) %>% 
-  flextable() %>% 
-  colformat_double(digits =1)
-head(SumPFOA_BothDays_MB_female) %>% 
-  flextable() %>% 
-  colformat_double(digits =1)
-head(SumPFOA_BothDays_UB_female) %>% 
-  flextable() %>% 
-  colformat_double(digits =1)
 
-```
 
-### Make summary data across all exposure assessmets for all females
-```{r}
+### Make summary data across all exposure assessments for all females
 
 PFOA_LB_females_BothDays_vector <- as.vector(PFOA_BothDays_LB_female_long$value)
 plot(ecdf(PFOA_LB_females_BothDays_vector))
@@ -528,13 +434,12 @@ SumPFOA_LB_female_BothDays
 SumPFOA_LB_female_BothDays <- summary(PFOA_LB_females_BothDays_vector)
 SumPFOA_LB_female_BothDays
 quantile(PFOA_LB_females_BothDays_vector, probs = c(.05, .5, .95))
-```
 
 
 ## Make summary data for all females based on all MC iterations expressed as ug/kg bw/day
 
-Divide the ug PFOA on individual BW
-```{r}
+# Divide the ug PFOA on individual BW
+
 #LB
 PFOA_BothDays_LB_female_kg <- PFOA_BothDays_LB_female_long %>% 
   left_join(SexWeight, by = c("IDkode" = "IDkode")) %>% 
@@ -565,11 +470,8 @@ SumPFOA_BothDays_UB_female_kg <- Sum_1(PFOA_BothDays_UB_female_kg)
 
 
 
-```
-
-
 ### Save the table as excel file
-```{r}
+
 
 write.xlsx(SumPFOA_BothDays_LB_female_kg, file = file.path(newday,"SumPFOA_BothDays_LB_female_kg.xlsx"),
            colNames = TRUE, borders = "rows")
@@ -580,12 +482,9 @@ write.xlsx(SumPFOA_BothDays_MB_female_kg, file = file.path(newday,"SumPFOA_BothD
 write.xlsx(SumPFOA_BothDays_UB_female_kg, file = file.path(newday,"SumPFOA_BothDays_UB_female_kg.xlsx"),
            colNames = TRUE, borders = "rows")
 
-```
-
 
 ## Plott external exposure to PFOA for females for LB, MB, and UB
 
-```{r}
 A = c(PFOA_BothDays_LB_female_long$value, PFOA_BothDays_MB_female_long$value, PFOA_BothDays_UB_female_long$value)
 B = replicate(100000,"LB")
 C = replicate(100000,"MB")
@@ -598,38 +497,34 @@ PFOA_females_BothDays_LB_MB_UB[2] <- E
 
 names(PFOA_females_BothDays_LB_MB_UB)[1] <- "PFOAconc"
 names(PFOA_females_BothDays_LB_MB_UB)[2] <- "Exposure"
-```
+
 
 ### Make a cumulative density plot with the LB, MB and UB exposure
 
-```{r}
-Plot_PFOA_females_BothDays_LB_MB_UB <- ggplot(data = PFOA_females_BothDays_LB_MB_UB, aes(PFOAconc, colour = Exposure)) +
+Plot_PFOA_females_diary_LB_MB_UB <- ggplot(data = PFOA_females_BothDays_LB_MB_UB, aes(PFOAconc, colour = Exposure)) +
   geom_line(stat = "ecdf", size = 0.5)+
   scale_colour_hue()+
   theme_minimal()+
-  scale_x_continuous(limits=c(1,150))+
-  xlab("PFOA (ng/day)")+
+  scale_x_continuous(limits=c(0.01,0.5))+
+  xlab("PFOA (ng/kg bw/day)")+
   ylab("Cumulative probability")+
-  annotate("text", x=150, y=0.95, label="Females", size=4)
+  annotate("text", x=0.45, y=0.95, label="Females", size=4)
 
-Plot_PFOA_females_BothDays_LB_MB_UB
+Plot_PFOA_females_diary_LB_MB_UB
 
-ggsave(filename=file.path(newday,"Plot_PFOA_females_BothDays_LB_MB_UB.jpeg"),
+ggsave(filename=file.path(newday,"Plot_PFOA_females_diary_LB_MB_UB.jpeg"),
        device = NULL,
        width=NA,
        height=NA,
        units="mm")
 
-```
 
-
-
+######################################
 # Combine plots for males and females
+######################################
 
-```{r}
 
-
-PFOA_males_females <- ggarrange(Plot_PFOA_males_BothDays_LB_MB_UB, Plot_PFOA_females_BothDays_LB_MB_UB + rremove("ylab"),
+PFOA_males_females <- ggarrange(Plot_PFOA_males_diary_LB_MB_UB, Plot_PFOA_females_diary_LB_MB_UB + rremove("ylab"),
                                               ncol = 2, nrow = 1, common.legend = TRUE) 
 PFOA_males_females
 
@@ -639,6 +534,25 @@ ggsave(filename=file.path(newday,"PFOA_males_females.jpeg"),
        height=NA,
        units="mm")
 
-```
+
+###################################
+# Merge data for males and females
+###################################
+
+SumPFOA_LB_food <- rbind(SumPFOA_BothDays_LB_female_kg, SumPFOA_BothDays_LB_male_kg)
+SumPFOA_LB_food <- arrange(SumPFOA_LB_food, IDkode)
+SumPFOA_LB_food <- SumPFOA_LB_food %>% dplyr::select(-N)
+SumPFOA_LB_food <- SumPFOA_LB_food %>%  rename_with(.fn = function(.x){paste0( .x, "_oral")},
+                                                    .cols = c(mean, sd, min, P05, P50, P95, max))
+
+
+SumPFOA_LB_food_PCP <- merge(SumPFOA_LB_food, SumPFOA_LB_PCP, by = "IDkode", all = TRUE)
+SumPFOA_LB_food_PCP <- merge(SumPFOA_LB_food_PCP, SexWeight, by = "IDkode", all = TRUE)
+SumPFOA_LB_food_PCP$Tmc_Sex <-ifelse(SumPFOA_LB_food_PCP$cat_male == 1, 5550, 6500)
+SumPFOA_LB_food_PCP <- rename(SumPFOA_LB_food_PCP, Sex=cat_male, BW=con_weight)
+SumPFOA_LB_food_PCP <- SumPFOA_LB_food_PCP %>%  relocate(c("Sex", "BW", "Tmc_Sex"), .before = mean_oral)
+
+write.xlsx(SumPFOA_LB_food_PCP, file = file.path(newday,"SumPFOA_LB_food_PCP.xlsx"),
+           colNames = TRUE, borders = "rows")
 
 

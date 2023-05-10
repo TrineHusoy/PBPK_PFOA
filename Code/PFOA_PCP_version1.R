@@ -3,11 +3,11 @@
 # Date 16.10.20
 #######################################################################################
 
-HOME <- "C:/Users/TRHU/Documents/R/PFAS_exposure"
+HOME <- "your work directory"
 
 setwd(HOME)
 
-newday <- file.path('C:/Users/TRHU/Documents/R/PFAS_exposure/Results', Sys.Date())
+newday <- file.path('your work directory/Results', Sys.Date())
 dir.create(newday)
 
 

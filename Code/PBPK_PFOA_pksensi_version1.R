@@ -69,28 +69,28 @@ Skinthickness = 0.1 # Skin thickness (cm)
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ## Scaled cardiac output and blood flows##
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
+QTC=QLC+QFC+QKC+QGC+QCP # Preparation for scaling
 QC = QCC*BW^0.75  # Cardiac output adjusted for BW (L/h)
 QCP = QC*(1-Htc)  # Cardiac output adjusted for plasma flow (L/h)
-QL = QLC*QCP  # Plasma flow to liver (L/h)
-QF = QFC*QCP  # Plasma flow to fat (L/h)
-QK = QKC*QCP  # Plasma flow to kidney (L/h)
+QL = QLC*QCP/QTC  # Scaled plasma flow to liver (L/h)
+QF = QFC*QCP/QTC  # Scaled plasma flow to fat (L/h)
+QK = QKC*QCP/QTC  # Scaled plasma flow to kidney (L/h)
 
-QG = QGC*QCP  # Plasma flow to gut (L/h)
+QG = QGC*QCP/QTC  # Scaled plasma flow to gut (L/h)
 
-QSk <- QSkC*QCP*(Skinarea/SkinTarea) #ifelse(Dermconc>0.0,QSkC*QCP*(Skinarea/SkinTarea),0.0) # plasma flow to the skin
+QSk <- QSkC*QCP*(Skinarea/SkinTarea)/QTC #ifelse(Dermconc>0.0,QSkC*QCP*(Skinarea/SkinTarea),0.0) # scaled plasma flow to the skin
 
 QR = QCP-QL-QF-QK-QG-QSk # Plasma flow to the rest of the body.
 
 
 ## Scaled tissue volumes ##
-
-VL = VLC*BW  # Liver volume (L)
-VF = VFC*BW  # Fat volume (L)
-VK = VKC*BW  # Kidney volume (L)
-Vfil = VfilC*BW  # Filtrate compartment volume
-VG = VGC*BW  # Gut volume (L)
-VPlas = VPlasC*BW  # Plasma volume(L)
+VTC = VLC+VLC+VKC+VfilC+VGC+VPlasC # Preparation for scaling 
+VL = VLC*BW/VTC  # Scaled liver volume (L)
+VF = VFC*BW/VTC  # Scaled fat volume (L)
+VK = VKC*BW/VTC  # Scaled kidney volume (L)
+Vfil = VfilC*BW/VTC  # Scaled filtrate compartment volume
+VG = VGC*BW/VTC  # Gut volume (L)
+VPlas = VPlasC*BW/VTC  # Scaled plasma volume(L)
 
 VSk = (Skinarea*Skinthickness)/1000  # Skin volume (L)
 VR = 0.84*BW-VL-VF-VK-Vfil-VG-VPlas-VSk  # Rest of the body volume (L). Need to know where the number 0.84 comes from???
@@ -345,9 +345,10 @@ PFOAamount <- as.data.frame(results)
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Qbal = QCP-(QR+QL+QF+QK+QG+QSk) # Mass balance check for the cardiac output 
+print(Qbal)
 
-Vbal = (0.84*BW)-(VL+VF+VK+Vfil+VG+VPlas+VSk+VR)  # Mass balance check for the volumes
-
+Vbal = (0.84*BW/VTC)-(VL+VF+VK+Vfil+VG+VPlas+VSk+VR)  # Mass balance check for the volumes
+print(Vbal)
 
 PFOA_bal <- sum(PFOAamount[,"Input1"]+ PFOAamount[,"Input2"]- PFOAamount[,"APlas"]- # Mass balance for PFOA
                   PFOAamount[,"AG"]-PFOAamount[,"AL"]-PFOAamount[,"AF"]-PFOAamount[,"AK"]-PFOAamount[,"AR"]-
@@ -420,8 +421,9 @@ out <- solve_fun(x, time=times, func = PBPKmodPFOA, initState = yini, outnames =
 saveRDS(object=out, file="out.rds")
 
 ## Output of the Uncertainty analysis ##
+pdf("out.pdf")
 pksim(out)
-
+dev.off()
 
 ## Output from the sensitivity analysis ##
 plot(out)
@@ -442,5 +444,10 @@ write.xlsx(ResultsSI,
 )
 
 check(out)
+pdf("heat_check_CI.pdf")
 heat_check(out, index = "CI")
+dev.off()
+
+pdf("heat_check_all.pdf")
 heat_check(out, show.all = TRUE)
+dev.off()

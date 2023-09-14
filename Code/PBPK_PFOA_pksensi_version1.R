@@ -417,6 +417,7 @@ dim(x$a) # the array of c(model evaluation, replication, parameters)
 ## Conduct simulation ##
 out <- solve_fun(x, time=times, func = PBPKmodPFOA, initState = yini, outnames = outputs)
 
+saveRDS(object=out, file="out.rds")
 
 ## Output of the Uncertainty analysis ##
 pksim(out)

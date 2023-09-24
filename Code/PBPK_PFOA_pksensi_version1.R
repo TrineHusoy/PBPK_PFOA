@@ -28,7 +28,7 @@ library(PKNCA)
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-### START PBPK ###
+### START PBPK model ###
 
 ## Time parameters ##
 

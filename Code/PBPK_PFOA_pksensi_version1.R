@@ -368,7 +368,7 @@ PFOA_bal <- sum(PFOAamount[,"Input1"]+ PFOAamount[,"Input2"]- PFOAamount[,"APlas
 
 q <- c( "qunif" , "qunif" , "qunif" , "qunif", "qunif", "qunif", "qunif" , "qunif" , "qunif" , "qunif", 
         "qunif" , "qunif" , "qunif" , "qunif", "qunif", "qunif", "qunif" , "qunif" , "qunif" , "qunif", 
-        "qunif", "qunif" , "qunif", "qunif" , "qunif", "qunif")
+        "qunif", "qunif" , "qunif")
 
 
 
@@ -400,9 +400,6 @@ q.arg <- list(list(min = para["Htc"]*LL, max= para["Htc"]*UL),
               list(min = para["VG"]*LL, max = para["VG"]*UL),
               list(min = para["VPlas"]*LL, max = para["VPlas"]*UL),
               list(min = para["VSk"]*LL, max = para["VSk"]*UL),
-              list(min = para["VR"]*LL, max = para["VR"]*UL),
-              list(min = para["Tm"]*LL, max = para["Tm"]*UL),
-              list(min = para["SkinTarea"]*LL, max = para["SkinTarea"]*UL),
               list(min = para["AbsPFOA"]*LL, max = para["AbsPFOA"]*UL)
 )
 
@@ -410,7 +407,8 @@ q.arg <- list(list(min = para["Htc"]*LL, max= para["Htc"]*UL),
 
 ## Create parameter matrix ##  
 set.seed(1234)
-params <- c("Htc", "Tmc", "Kt", "Free", "BW", "kurinec", "kbiliaryc", "kfaecesc", "kfil", "PL", "PF", "PK", "PSk", "PR", "PG", "VL", "VF", "VK", "Vfil", "VG", "VPlas", "VSk", "VR",  "Tm", "SkinTarea", "AbsPFOA")
+params <- c("Htc", "Tmc", "Kt", "Free", "BW", "kurinec", "kbiliaryc", "kfaecesc", "kfil", "PL", "PF", "PK", "PSk", "PR", "PG", "VL", "VF", "VK", "Vfil", "VG", "VPlas", "VSk", "AbsPFOA")
+length(params)==length(q)
 x <- rfast99(params = params, n = 200, q = q, q.arg = q.arg, rep = 10)
 
 dim(x$a) # the array of c(model evaluation, replication, parameters)
@@ -418,15 +416,18 @@ dim(x$a) # the array of c(model evaluation, replication, parameters)
 ## Conduct simulation ##
 out <- solve_fun(x, time=times, func = PBPKmodPFOA, initState = yini, outnames = outputs)
 
-saveRDS(object=out, file="out.rds")
+saveRDS(object=out, file="out_scaled.rds")
+#out <- readRDS("out_scaled.rds")
 
 ## Output of the Uncertainty analysis ##
-pdf("out.pdf")
+pdf("out_scaled.pdf")
 pksim(out)
 dev.off()
 
 ## Output from the sensitivity analysis ##
+pdf("out_scaled.pdf")
 plot(out)
+dev.off()
 
 ResultsSI <- as.data.frame(print(out["tSI"]))
 ResultsSI$Times <- rownames(ResultsSI)
@@ -439,12 +440,12 @@ write.xlsx(ResultsSI,
 )
 
 write.xlsx(ResultsSI,
-           file = "Results/2022-10-25/ResultsSI.xlsx",
+           file = "Results/2023-09-24/ResultsSI.xlsx",
            colNames = TRUE
 )
 
 check(out)
-pdf("heat_check_CI.pdf")
+pdf("heat_check_CI_scaled.pdf")
 heat_check(out, index = "CI")
 dev.off()
 

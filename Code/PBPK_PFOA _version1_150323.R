@@ -273,10 +273,15 @@ yini <- unlist(c(data.frame(
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Model for PFOA
+
+# The line 285 til 288 of code control the dosing of a substance based on time (t) and specific dosing intervals (“tinterval” and “Tinput”). 
+# It calculates two variables, “Input1” and “Input2”, which represent the dosing input for oral and dermal routes, respectively. 
+# The “DoseOn” variable determines whether dosing is active at a given time based on the comparison of “t” and “tchng”.
+  
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 PBPKmodPFOA <- function(t,state,parameters){
   with(as.list(c(state,parameters)), {
-    
+
     if(t<tchng){DoseOn=1} else{DoseOn=0}
     
     Input1 <- Oraldose/Tinput*(t %% tinterval<Tinput) 

@@ -92,7 +92,7 @@ Vfil = VfilC*BW/VTC  # Scaled filtrate compartment volume
 VG = VGC*BW/VTC  # Gut volume (L)
 VPlas = VPlasC*BW/VTC  # Scaled plasma volume(L)
 
-VSk = (Skinarea*Skinthickness)/1000  # Skin volume (L)
+VSk = (Skinarea*Skinthickness)/1000/VTC  # Skin volume (L)
 VR = 0.84*BW-VL-VF-VK-Vfil-VG-VPlas-VSk  # Rest of the body volume (L). Need to know where the number 0.84 comes from???
 
 

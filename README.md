@@ -1,6 +1,6 @@
 # Human PBPK model for PFOA in R
 
-The purpose of the present work is to translate an existing physiologically based pharmacokinetic (PBPK) model for perfluorooctanoic acid (PFOA) to R, which will be used to study human exposure of PFOA in blood from diet and cosmetics.
+The purpose of the present work is to translate an existing physiologically based pharmacokinetic (PBPK) model for perfluorooctanoic acid (PFOA) to R, which will be used to study human exposure of PFOA in blood from diet and cosmetics. The model is for the adult general population.
 
 ### Why PFOA
 PFOA is a part of a large group of compounds called per- and polyfluoroalkyl substances (PFASs), which are widely used chemically synthesized compounds that are water, stain, and oil repellent. They are highly persistent and several of the compounds, including PFOA, accumulates in the food chain. The health effects of PFOA in humans are still being studied, but exposure are associated with a range of health effects, including developmental and reproductive toxicity, immune system effects, and cancer. Increased knowledge of human exposure and internal dose in humans are important to link exposure of PFOA to the adverse health effects.

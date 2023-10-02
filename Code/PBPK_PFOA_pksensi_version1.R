@@ -73,7 +73,7 @@ Skinthickness = 0.1 # Skin thickness (cm)
 QC = QCC*BW^0.75  # Cardiac output adjusted for BW (L/h)
 QCP = QC*(1-Htc)  # Cardiac output adjusted for plasma flow (L/h)
 
-QTC=QLC+QFC+QKC+QGC # Preparation for scaling
+QTC=QLC+QFC+QKC+QGC+QSkC # Preparation for scaling
 
 QL = QLC*QCP/QTC  # Scaled plasma flow to liver (L/h)
 QF = QFC*QCP/QTC  # Scaled plasma flow to fat (L/h)

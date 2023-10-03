@@ -412,7 +412,7 @@ q.arg <- list(list(min = para["Htc"]*LL, max= para["Htc"]*UL),
 set.seed(1234)
 params <- c("Htc", "Tmc", "Kt", "Free", "BW", "kurinec", "kbiliaryc", "kfaecesc", "kfil", "PL", "PF", "PK", "PSk", "PR", "PG", "VL", "VF", "VK", "Vfil", "VG", "VPlas", "VSk", "AbsPFOA")
 length(params)==length(q)
-x <- rfast99(params = params, n = 200, q = q, q.arg = q.arg, rep = 10)
+x <- rfast99(params = params, n = 1000, q = q, q.arg = q.arg, rep = 10, rtol = 1e-7, atol = 1e-9)
 
 dim(x$a) # the array of c(model evaluation, replication, parameters)
 

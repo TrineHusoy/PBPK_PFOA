@@ -370,8 +370,8 @@ print(PFOA_bal)
 ## Define the distribution of the parameters that you will analyse in the sensitivity test 
 
 q <- c( "qunif" , "qunif" , "qunif" , "qunif", "qunif", "qunif", "qunif" , "qunif" , "qunif" , "qunif", 
-        "qunif" , "qunif" , "qunif" , "qunif", "qunif", "qunif", "qunif" , "qunif" , "qunif" , "qunif", 
-        "qunif", "qunif" , "qunif")
+        "qunif" , "qunif" , "qunif" , "qunif", "qunif", "qunif", "qunif") # , "qunif" , "qunif" , "qunif", 
+        #"qunif", "qunif" , "qunif")
 
 
 
@@ -385,7 +385,7 @@ q.arg <- list(list(min = para["Htc"]*LL, max= para["Htc"]*UL),
               list(min = para["Tmc"]*LL, max= para["Tmc"]*UL),
               list(min = para["Kt"]*LL, max =  para["Kt"]*UL),
               list(min = para["Free"]*LL, max =  para["Free"]*UL),
-              #list(min = para["BW"]*LL, max =  para["BW"]*UL),
+              list(min = para["BW"]*LL, max =  para["BW"]*UL),
               list(min = para["kurinec"]*LL, max = para["kurinec"]*UL),
               list(min = para["kbiliaryc"]*LL, max = para["kbiliaryc"]*UL),
               list(min = para["kfaecesc"]*LL, max = para["kfaecesc"]*UL),
@@ -397,13 +397,13 @@ q.arg <- list(list(min = para["Htc"]*LL, max= para["Htc"]*UL),
               list(min = para["PR"]*LL, max = para["PR"]*UL),
               list(min = para["PG"]*LL, max = para["PG"]*UL),
               list(min = para["VLC"]*LL, max = para["VLC"]*UL),
-              list(min = para["VFC"]*LL, max = para["VFC"]*UL),
-              list(min = para["VKC"]*LL, max = para["VKC"]*UL),
-              list(min = para["VfilC"]*LL, max = para["VfilC"]*UL),
-              list(min = para["VGC"]*LL, max = para["VGC"]*UL),
-              list(min = para["VPlasC"]*LL, max = para["VPlasC"]*UL),
-              list(min = para["Skinarea"]*LL, max = para["Skinarea"]*UL),
-              list(min = para["Skinthickness"]*LL, max = para["Skinthickness"]*UL),
+              # list(min = para["VFC"]*LL, max = para["VFC"]*UL),
+              # list(min = para["VKC"]*LL, max = para["VKC"]*UL),
+              # list(min = para["VfilC"]*LL, max = para["VfilC"]*UL),
+              # list(min = para["VGC"]*LL, max = para["VGC"]*UL),
+              # list(min = para["VPlasC"]*LL, max = para["VPlasC"]*UL),
+              # list(min = para["Skinarea"]*LL, max = para["Skinarea"]*UL),
+              # list(min = para["Skinthickness"]*LL, max = para["Skinthickness"]*UL),
               list(min = para["AbsPFOA"]*LL, max = para["AbsPFOA"]*UL)
 )
 
@@ -411,7 +411,7 @@ q.arg <- list(list(min = para["Htc"]*LL, max= para["Htc"]*UL),
 
 ## Create parameter matrix ##  
 set.seed(1234)
-params <- c("Htc", "Tmc", "Kt", "Free", "kurinec", "kbiliaryc", "kfaecesc", "kfil", "PL", "PF", "PK", "PSk", "PR", "PG", "VLC", "VFC", "VKC","VfilC", "VGC", "VPlasC", "Skinarea", "Skinthickness", "AbsPFOA")
+params <- c("Htc", "Tmc", "Kt", "Free", "BW", "kurinec", "kbiliaryc", "kfaecesc", "kfil", "PL", "PF", "PK", "PSk", "PR", "PG", "VLC", "AbsPFOA") #"VFC", "VKC","VfilC", "VGC", "VPlasC", "Skinarea", "Skinthickness",
 length(params)==length(q)
 x <- rfast99(params = params, n = 200, q = q, q.arg = q.arg, rep = 10)
 

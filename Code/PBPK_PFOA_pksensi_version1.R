@@ -397,8 +397,8 @@ q.arg <- list(list(min = para["Htc"]*LL, max= para["Htc"]*UL),
               list(min = para["PR"]*LL, max = para["PR"]*UL),
               list(min = para["PG"]*LL, max = para["PG"]*UL),
               # list(min = para["VLC"]*LL, max = para["VLC"]*UL),
-              list(min = para["VFC"]*LL, max = para["VFC"]*UL),
-              # list(min = para["VKC"]*LL, max = para["VKC"]*UL),
+              # list(min = para["VFC"]*LL, max = para["VFC"]*UL),
+              list(min = para["VKC"]*LL, max = para["VKC"]*UL),
               # list(min = para["VfilC"]*LL, max = para["VfilC"]*UL),
               # list(min = para["VGC"]*LL, max = para["VGC"]*UL),
               # list(min = para["VPlasC"]*LL, max = para["VPlasC"]*UL),
@@ -411,7 +411,7 @@ q.arg <- list(list(min = para["Htc"]*LL, max= para["Htc"]*UL),
 
 ## Create parameter matrix ##  
 set.seed(1234)
-params <- c("Htc", "Tmc", "Kt", "Free", "BW", "kurinec", "kbiliaryc", "kfaecesc", "kfil", "PL", "PF", "PK", "PSk", "PR", "PG", "VFC", "AbsPFOA") #"VLC", "VKC","VfilC", "VGC", "VPlasC", "Skinarea", "Skinthickness",
+params <- c("Htc", "Tmc", "Kt", "Free", "BW", "kurinec", "kbiliaryc", "kfaecesc", "kfil", "PL", "PF", "PK", "PSk", "PR", "PG", "VKC", "AbsPFOA") #"VLC", "VFC", "VKC","VfilC", "VGC", "VPlasC", "Skinarea", "Skinthickness",
 length(params)==length(q)
 x <- rfast99(params = params, n = 200, q = q, q.arg = q.arg, rep = 10)
 

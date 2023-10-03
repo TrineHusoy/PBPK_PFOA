@@ -369,10 +369,7 @@ PFOA_bal <- sum(PFOAamount[,"Input1"]+ PFOAamount[,"Input2"]- PFOAamount[,"APlas
 
 ## Define the distribution of the parameters that you will analyse in the sensitivity test 
 
-q <- c( "qunif" , "qunif" , "qunif" , "qunif", "qunif", "qunif", "qunif" , "qunif" , "qunif" , "qunif", 
-        "qunif" , "qunif" , "qunif" , "qunif", "qunif", "qunif", "qunif" , "qunif" , "qunif" , "qunif", 
-        "qunif", "qunif" , "qunif")
-
+q <- rep("qunif", 23)
 
 
 ## Set parameter distribution ##

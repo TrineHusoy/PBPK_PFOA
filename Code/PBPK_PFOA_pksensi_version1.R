@@ -357,7 +357,7 @@ PFOA_bal <- sum(PFOAamount[,"Input1"]+ PFOAamount[,"Input2"]- PFOAamount[,"APlas
                   PFOAamount[,"AG"]-PFOAamount[,"AL"]-PFOAamount[,"AF"]-PFOAamount[,"AK"]-PFOAamount[,"AR"]-
                   PFOAamount[,"ASk"]-PFOAamount[,"Afil"]-PFOAamount[,"Aurine"]-PFOAamount[,"Adelay"]-PFOAamount[,"Afaeces"])
 
-
+print(PFOA_bal)
 
 
 
@@ -369,11 +369,8 @@ PFOA_bal <- sum(PFOAamount[,"Input1"]+ PFOAamount[,"Input2"]- PFOAamount[,"APlas
 
 ## Define the distribution of the parameters that you will analyse in the sensitivity test 
 
-q <- c( "qunif" , "qunif" , "qunif" , "qunif", "qunif", "qunif", "qunif" , "qunif" , "qunif" , "qunif", 
-        "qunif" , "qunif" , "qunif" , "qunif", "qunif", "qunif", "qunif" , "qunif" , "qunif" , "qunif", 
-        "qunif", "qunif" , "qunif")
-
-
+q <- rep("qunif", 16)
+  
 
 ## Set parameter distribution ##
 # we use 10% change in all parameters
@@ -396,13 +393,6 @@ q.arg <- list(list(min = para["Htc"]*LL, max= para["Htc"]*UL),
               list(min = para["PSk"]*LL, max = para["PSk"]*UL),
               list(min = para["PR"]*LL, max = para["PR"]*UL),
               list(min = para["PG"]*LL, max = para["PG"]*UL),
-              list(min = para["VL"]*LL, max = para["VL"]*UL),
-              list(min = para["VF"]*LL, max = para["VF"]*UL),
-              list(min = para["VK"]*LL, max = para["VK"]*UL),
-              list(min = para["Vfil"]*LL, max = para["Vfil"]*UL),
-              list(min = para["VG"]*LL, max = para["VG"]*UL),
-              list(min = para["VPlas"]*LL, max = para["VPlas"]*UL),
-              list(min = para["VSk"]*LL, max = para["VSk"]*UL),
               list(min = para["AbsPFOA"]*LL, max = para["AbsPFOA"]*UL)
 )
 
@@ -410,7 +400,7 @@ q.arg <- list(list(min = para["Htc"]*LL, max= para["Htc"]*UL),
 
 ## Create parameter matrix ##  
 set.seed(1234)
-params <- c("Htc", "Tmc", "Kt", "Free", "BW", "kurinec", "kbiliaryc", "kfaecesc", "kfil", "PL", "PF", "PK", "PSk", "PR", "PG", "VL", "VF", "VK", "Vfil", "VG", "VPlas", "VSk", "AbsPFOA")
+params <- c("Htc", "Tmc", "Kt", "Free", "BW", "kurinec", "kbiliaryc", "kfaecesc", "kfil", "PL", "PF", "PK", "PSk", "PR", "PG", "AbsPFOA")
 length(params)==length(q)
 x <- rfast99(params = params, n = 200, q = q, q.arg = q.arg, rep = 10)
 
@@ -442,15 +432,6 @@ write.xlsx(ResultsSI,
            colNames = TRUE, borders = "rows"
 )
 
-write.xlsx(ResultsSI,
-           file = "Results/2023-09-24/ResultsSI.xlsx",
-           colNames = TRUE
-)
-
-check(out)
-pdf("heat_check_CI_scaled.pdf")
-heat_check(out, index = "CI")
-dev.off()
 
 pdf("heat_check_all.pdf")
 heat_check(out, show.all = TRUE)

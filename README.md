@@ -42,12 +42,12 @@ The data files as input to the dietary exposure
 
 ### Files used for running the PBPK model
 The R code to run the PBPK model  
-[PBPK_PFOA_version1_150323.R](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Code/PBPK_PFOA%20_version1_150323.R)  
+[PBPK_PFOA_version2_191223.R](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Code/PBPK_PFOA%20_version1_150323.R)  
 The data files as input to the PBPK modeling from the exposure  
 [SumPFOA_LB_food_PCP.csv](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Data/foodintake_dummy_day1.csv)
 
 ### Files used for the sensitivity analyses of the PBPK model
-[PBPK_PFOA_pksensi_version1.R](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Code/PBPK_PFOA_pksensi_version1.R)  
+[PBPK_PFOA_pksensi_version2_111223.R](https://github.com/TrineHusoy/PBPK_PFOA/blob/main/Code/PBPK_PFOA_pksensi_version1.R)  
 
 ## Exposure assesment from diet and PCPs
 Establish the folders "Code", "Data" and "Results" in your directory and copy the relevant files to the appropriate folders. Open the R or Rmd code in RStudio and insert your work directory in the code. The data files will be uploaded and create a new folder under "Results" with the date of the day to store the results. Run the exposure assessment for the PCP first as the output will be merged with the results from the food later. This can be input to the PBPK model.

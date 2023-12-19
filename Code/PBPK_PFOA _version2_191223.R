@@ -6,12 +6,12 @@
 #####################################################################################################
 
 # set work directory
-HOME <- "work directory"
+HOME <- "C:/Users/TRHU/Documents/R/PBPK_PFOA_PFOS"
 setwd(HOME)
 
 
 # creating a new folder to store the results 
-newday <- file.path('work directory/Results', Sys.Date())
+newday <- file.path('C:/Users/TRHU/Documents/R/PBPK_PFOA_PFOS/Results', Sys.Date())
 dir.create(newday)
 
 # load packages
@@ -25,7 +25,7 @@ library(tidyverse)
 
 ## Read in data ##
 
-PFOA_LB_dummy <-  read.delim("./Data/SumPFOA_LB_food_PCP.csv", sep = ";")
+PFOA_LB_dummy <-  read.delim("./Data/PFOA_LB_dummy.csv", sep = ";")
 
 nPeople <- as.numeric(nrow(PFOA_LB_dummy))
 
@@ -37,12 +37,11 @@ PFOAUrine <- matrix(0, ncol = nPeople, nrow = 438001)
 PFOAKidney <- matrix(0, ncol = nPeople, nrow = 438001)
 PFOALiver <- matrix(0, ncol = nPeople, nrow = 438001)
 
+PFOASerumTestTot
 
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 ###### PBPK model PFOA ####
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
-
-### START PBPK ###
 
 for (i in 1:nPeople) { 
 
@@ -72,7 +71,7 @@ QKC = 0.175 # Fraction cardiac output going to kidney
 QSkC = 0.058 # Fraction cardiac output going to skin
 QGC = 0.181 # Fraction of cardiac output going to gut and the liver via portal arthery
 
-BW = as.numeric(PFOA_LB_dummy[i,3])      # Body weight from the EuroMix study
+BW = as.numeric(SumExpPFOA_LB_val[i,3])      # Body weight from the EuroMix study
 
 ## fractional tissue columes ##
 
@@ -138,7 +137,7 @@ AbsPFOA =  0.016 #0.00048     # Changed to the absorption measured by Abraham an
 
 # kidney and urine #
 
-Tmc = as.numeric(PFOA_LB_dummy[i,4]) #5000  # ug/h/kg^0.75 Maximum resorption rate, changed from 6 in the original Loccisano 2011 model (ug)
+Tmc = as.numeric(SumExpPFOA_LB_val[i,5]) #5000  # ug/h/kg^0.75 Maximum resorption rate, changed from 6 in the original Loccisano 2011 model (ug)
 # representing a half-life of 2.3 years
 
 Tm = Tmc*BW^0.75 # transporter maximum
@@ -179,14 +178,14 @@ tchng = 50*365*24  # Duration of exposure (h); 50 years; turn dose on and off
 
 
 
-Dermconc = as.numeric(PFOA_LB_dummy[i,12])
+Dermconc = 0 #as.numeric(SumExpPFOA_LB_val[i,14])
 Dermdose = Dermconc*BW*AbsPFOA     # Internal dose from dermal absorption (Ug/day)
 
 
 
 ## Oral exposure ##
 
-Oralconc = as.numeric(PFOA_LB_dummy[i,5])  # Oral uptake /ug/kg bw/day
+Oralconc = as.numeric(SumExpPFOA_LB_val[i,7])  # Oral uptake /ug/kg bw/day
 Oraldose = Oralconc*BW  # (ug/day)
 
 
@@ -273,15 +272,10 @@ yini <- unlist(c(data.frame(
 
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 # Model for PFOA
-
-# The line 285 til 288 of code control the dosing of a substance based on time (t) and specific dosing intervals (“tinterval” and “Tinput”). 
-# It calculates two variables, “Input1” and “Input2”, which represent the dosing input for oral and dermal routes, respectively. 
-# The “DoseOn” variable determines whether dosing is active at a given time based on the comparison of “t” and “tchng”.
-  
 # ++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 PBPKmodPFOA <- function(t,state,parameters){
   with(as.list(c(state,parameters)), {
-
+    
     if(t<tchng){DoseOn=1} else{DoseOn=0}
     
     Input1 <- Oraldose/Tinput*(t %% tinterval<Tinput) 
@@ -323,11 +317,11 @@ PBPKmodPFOA <- function(t,state,parameters){
     RF <- QF*(CA*Free-CF*FreeF) # Rate of PFOA amount change in fat (ug/h)
     
     ## Kidney compartment
-    RK <- QK*(CA*Free-CK*FreeK)+Tm*Cfil/(Kt+Cfil)-kfil*CK*Free # Qfil*CK*Free was introduced to reflect clearance to filtrate compartment
+    RK <- QK*(CA*Free-CK*FreeK)+Tm*Cfil/(Kt+Cfil)-kfil*CK*FreeK # Qfil*CK*Free was introduced to reflect clearance to filtrate compartment
     # Rate of PFOA amount change in kidney (ug/h)
     
     ## Filtrate compartment
-    Rfil <- kfil*(CK*Free-Cfil)-Tm*Cfil/(Kt+Cfil) # changed from Qfil*CA*Free 
+    Rfil <- kfil*(CK*FreeK-Cfil)-Tm*Cfil/(Kt+Cfil) # changed from Qfil*CA*Free 
     # Rate of PFOA amount change in filtrate compartment (ug/h)
     
     ## Storage compartment for urine

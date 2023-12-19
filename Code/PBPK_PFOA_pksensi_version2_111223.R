@@ -1,15 +1,18 @@
 ####################################################################################################
-# Sensitivity analysis of the PBPK model of PFOA using pksensi
-# Trine Husøy
-# Date: 090523
+# In this project we want to implement a PBPK model on PFOA described by EFSA 2020
+# Originally this PBPK model were first published by Loccisano et al 2011
+# The goal is to translate the model from Berkeley-Madonna to R, and make it work with the same data
+# An implementation of a global sensitivity analysis is needed before we modify the model
+# Modify the model to include dermal exposure and excretion in bile and enterohepatic circulation
+# Date 17.03.20
 #####################################################################################################
 
-HOME <- "your work directory"
+HOME <- "F:/Forskningsprosjekter/PDB 1996 - EUROMIX - European t_/Forskningsfiler/TRHU/R/PBPK_PFOA_PFOS"
 
 setwd(HOME)
 
 
-newday <- file.path('your work directory/Results', Sys.Date())
+newday <- file.path('F:/Forskningsprosjekter/PDB 1996 - EUROMIX - European t_/Forskningsfiler/TRHU/R/PBPK_PFOA_PFOS/Results', Sys.Date())
 dir.create(newday)
 
 
@@ -28,7 +31,7 @@ library(PKNCA)
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 
-### START PBPK model ###
+### START PBPK ###
 
 ## Time parameters ##
 
@@ -51,7 +54,7 @@ QGC = 0.181 # Fraction of cardiac output going to gut and the liver via portal a
 
 BW = 59      # Body weight from the EuroMix study
 
-## fractional tissue columes ##
+### fractional tissue volumes ###
 
 VLC = 0.026  # Fraction liver volume
 VFC = 0.214  # Fraction fat volume
@@ -73,7 +76,7 @@ Skinthickness = 0.1 # Skin thickness (cm)
 QC = QCC*BW^0.75  # Cardiac output adjusted for BW (L/h)
 QCP = QC*(1-Htc)  # Cardiac output adjusted for plasma flow (L/h)
 
-QTC=QLC+QFC+QKC+QGC+QSkC # Preparation for scaling
+QTC=QFC+QLC+QKC+QGC+QSkC # Preparation for scaling Exclude QCP
 
 QL = QLC*QCP/QTC  # Scaled plasma flow to liver (L/h)
 QF = QFC*QCP/QTC  # Scaled plasma flow to fat (L/h)
@@ -85,9 +88,21 @@ QSk <- QSkC*QCP*(Skinarea/SkinTarea)/QTC # scaled plasma flow to the skin
 
 QR = QCP-QL-QF-QK-QG-QSk # Plasma flow to the rest of the body.
 
+# QL = QLC*QCP  # Plasma flow to liver (L/h)
+# QF = QFC*QCP  # Plasma flow to fat (L/h)
+# QK = QKC*QCP  # Plasma flow to kidney (L/h)
+# 
+# QG = QGC*QCP  # Plasma flow to gut (L/h)
+# 
+# QSk <- QSkC*QCP*(Skinarea/SkinTarea) #ifelse(Dermconc>0.0,QSkC*QCP*(Skinarea/SkinTarea),0.0) # plasma flow to the skin
+# 
+# QR = QCP-QL-QF-QK-QG-QSk # Plasma flow to the rest of the body.
+
 
 ## Scaled tissue volumes ##
-VTC = VLC+VFC+VKC+VfilC+VGC+VPlasC +(Skinarea*Skinthickness)/1000 # Preparation for scaling 
+
+
+VTC = VLC+VFC+VKC+VfilC+VGC+VPlasC+(Skinarea*Skinthickness)/1000 # Preparation for scaling NB! The VLC was included twice, and one VLC should be changed to VFC
 VL = VLC*BW/VTC  # Scaled liver volume (L)
 VF = VFC*BW/VTC  # Scaled fat volume (L)
 VK = VKC*BW/VTC  # Scaled kidney volume (L)
@@ -97,6 +112,18 @@ VPlas = VPlasC*BW/VTC  # Scaled plasma volume(L)
 
 VSk = (Skinarea*Skinthickness)/1000/VTC  # Skin volume (L)
 VR = 0.84*BW-VL-VF-VK-Vfil-VG-VPlas-VSk  # Rest of the body volume (L). Need to know where the number 0.84 comes from???
+
+
+
+# VL = VLC*BW  # Liver volume (L)
+# VF = VFC*BW  # Fat volume (L)
+# VK = VKC*BW  # Kidney volume (L)
+# Vfil = VfilC*BW  # Filtrate compartment volume
+# VG = VGC*BW  # Gut volume (L)
+# VPlas = VPlasC*BW  # Plasma volume(L)
+# 
+# VSk = (Skinarea*Skinthickness)/1000  # Skin volume (L)
+# VR = 0.84*BW-VL-VF-VK-Vfil-VG-VPlas-VSk  # Rest of the body volume (L). Need to know where the number 0.84 comes from???
 
 
 
@@ -291,11 +318,11 @@ PBPKmodPFOA <- function(t,state,parameters){
     RF <- QF*(CA*Free-CF*FreeF) # Rate of PFOA amount change in fat (ug/h)
     
     ## Kidney compartment
-    RK <- QK*(CA*Free-CK*FreeK)+Tm*Cfil/(Kt+Cfil)-kfil*CK*Free # Qfil*CK*Free was introduced to reflect clearance to filtrate compartment
+    RK <- QK*(CA*Free-CK*FreeK)+Tm*Cfil/(Kt+Cfil)-kfil*CK*FreeK # Qfil*CK*Free was introduced to reflect clearance to filtrate compartment
     # Rate of PFOA amount change in kidney (ug/h)
     
     ## Filtrate compartment
-    Rfil <- kfil*(CK*Free-Cfil)-Tm*Cfil/(Kt+Cfil) # changed from Qfil*CA*Free 
+    Rfil <- kfil*(CK*FreeK-Cfil)-Tm*Cfil/(Kt+Cfil) # changed from Qfil*CA*Free 
     # Rate of PFOA amount change in filtrate compartment (ug/h)
     
     ## Storage compartment for urine
@@ -348,17 +375,13 @@ PFOAamount <- as.data.frame(results)
 # +++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++
 
 Qbal = QCP-(QR+QL+QF+QK+QG+QSk) # Mass balance check for the cardiac output 
-print(Qbal)
 
 Vbal = (0.84*BW)-(VL+VF+VK+Vfil+VG+VPlas+VSk+VR)  # Mass balance check for the volumes
-print(Vbal)
+
 
 PFOA_bal <- sum(PFOAamount[,"Input1"]+ PFOAamount[,"Input2"]- PFOAamount[,"APlas"]- # Mass balance for PFOA
                   PFOAamount[,"AG"]-PFOAamount[,"AL"]-PFOAamount[,"AF"]-PFOAamount[,"AK"]-PFOAamount[,"AR"]-
                   PFOAamount[,"ASk"]-PFOAamount[,"Afil"]-PFOAamount[,"Aurine"]-PFOAamount[,"Adelay"]-PFOAamount[,"Afaeces"])
-
-print(PFOA_bal)
-
 
 
 
@@ -369,8 +392,11 @@ print(PFOA_bal)
 
 ## Define the distribution of the parameters that you will analyse in the sensitivity test 
 
-q <- rep("qunif", 16)
-  
+q <- c( "qunif" , "qunif" , "qunif" , "qunif", "qunif", "qunif", "qunif" , "qunif" , "qunif" , "qunif", 
+        "qunif" , "qunif" , "qunif" , "qunif", "qunif", "qunif", "qunif" , "qunif" , "qunif" , "qunif", 
+        "qunif", "qunif" , "qunif")
+
+
 
 ## Set parameter distribution ##
 # we use 10% change in all parameters
@@ -393,6 +419,13 @@ q.arg <- list(list(min = para["Htc"]*LL, max= para["Htc"]*UL),
               list(min = para["PSk"]*LL, max = para["PSk"]*UL),
               list(min = para["PR"]*LL, max = para["PR"]*UL),
               list(min = para["PG"]*LL, max = para["PG"]*UL),
+              list(min = para["VL"]*LL, max = para["VL"]*UL),
+              list(min = para["VF"]*LL, max = para["VF"]*UL),
+              list(min = para["VK"]*LL, max = para["VK"]*UL),
+              list(min = para["Vfil"]*LL, max = para["Vfil"]*UL),
+              list(min = para["VG"]*LL, max = para["VG"]*UL),
+              list(min = para["VPlas"]*LL, max = para["VPlas"]*UL),
+              list(min = para["VSk"]*LL, max = para["VSk"]*UL),
               list(min = para["AbsPFOA"]*LL, max = para["AbsPFOA"]*UL)
 )
 
@@ -400,7 +433,7 @@ q.arg <- list(list(min = para["Htc"]*LL, max= para["Htc"]*UL),
 
 ## Create parameter matrix ##  
 set.seed(1234)
-params <- c("Htc", "Tmc", "Kt", "Free", "BW", "kurinec", "kbiliaryc", "kfaecesc", "kfil", "PL", "PF", "PK", "PSk", "PR", "PG", "AbsPFOA")
+params <- c("Htc", "Tmc", "Kt", "Free", "BW", "kurinec", "kbiliaryc", "kfaecesc", "kfil", "PL", "PF", "PK", "PSk", "PR", "PG", "VL", "VF", "VK", "Vfil", "VG", "VPlas", "VSk", "AbsPFOA")
 length(params)==length(q)
 x <- rfast99(params = params, n = 200, q = q, q.arg = q.arg, rep = 10)
 
@@ -432,7 +465,18 @@ write.xlsx(ResultsSI,
            colNames = TRUE, borders = "rows"
 )
 
+write.xlsx(ResultsSI,
+           file = "Results/2023-09-24/ResultsSI.xlsx",
+           colNames = TRUE
+)
+
+check(out)
+pdf("heat_check_CI_scaled.pdf")
+heat_check(out, index = "CI")
+dev.off()
 
 pdf("heat_check_all.pdf")
 heat_check(out, show.all = TRUE)
 dev.off()
+
+
